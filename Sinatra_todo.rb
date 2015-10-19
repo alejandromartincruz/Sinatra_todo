@@ -13,6 +13,7 @@ class Task
         @@current_id += 1
         @done = false
         @created_at = Time.now
+        @updated_at = nil
     end
 
     def completed?
@@ -25,6 +26,11 @@ class Task
 
     def make_incomplete!
     	@done=false
+    end
+
+    def update_content!(content)
+    	@content = content
+    	@updated_at = Time.now
     end
 
 end
@@ -68,6 +74,12 @@ end
       expect(@task1.make_incomplete!).to eq(false)
       expect(@task2.make_incomplete!).to eq(false)
       expect(@task3.make_incomplete!).to eq(false)
+    end
+
+    it "Change the content of the task" do
+      expect(@task1.update_content!("Ahora hago algo diferente")).to eq("Ahora hago algo diferente")
+      expect(@task2.update_content!("Aqui tambien hago otra cosa")).to eq(("Aqui tambien hago otra cosa"))
+      expect(@task3.update_content!("Pero aqui sigo descansando")).to eq("Pero aqui sigo descansando")
     end
 
   end

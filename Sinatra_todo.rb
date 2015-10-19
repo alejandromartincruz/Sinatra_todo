@@ -1,6 +1,15 @@
 require 'rspec'
 
 class Todolist
+	attr_reader :tasks
+    
+    def initialize
+        @tasks = []
+    end
+
+    def add_task(task)
+    	@tasks.push(task)
+    end
 
 end
 
@@ -29,8 +38,8 @@ class Task
     end
 
     def update_content!(content)
-    	@content = content
     	@updated_at = Time.now
+    	@content = content
     end
 
 end
@@ -39,7 +48,7 @@ end
 describe Todolist do 
 
 before :each do
-#	@Todo = Task.new
+	@Todo = Todolist.new
 	@task1 = Task.new("alguna cosa tendre que hacer")
 	@task2 = Task.new("luego hare algo mas")
 	@task3 = Task.new("y luego toca descansar")
@@ -78,8 +87,14 @@ end
 
     it "Change the content of the task" do
       expect(@task1.update_content!("Ahora hago algo diferente")).to eq("Ahora hago algo diferente")
-      expect(@task2.update_content!("Aqui tambien hago otra cosa")).to eq(("Aqui tambien hago otra cosa"))
+      expect(@task2.update_content!("Aqui tambien hago otra cosa")).to eq("Aqui tambien hago otra cosa")
       expect(@task3.update_content!("Pero aqui sigo descansando")).to eq("Pero aqui sigo descansando")
+    end
+
+    it "Add taks to the todo list" do
+      expect(@Todo.add_task(@task1)).to eq([@task1])
+      expect(@Todo.add_task(@task2)).to eq([@task1, @task2])
+      expect(@Todo.add_task(@task3)).to eq([@task1, @task2, @task3])
     end
 
   end

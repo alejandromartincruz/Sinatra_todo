@@ -12,6 +12,7 @@ class Task
         @id = @@current_id
         @@current_id += 1
         @done = false
+        @created_at = Time.now
     end
 
     def completed?

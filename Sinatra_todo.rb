@@ -11,6 +11,14 @@ class Todolist
     	@tasks.push(task)
     end
 
+    def delete_task(id)
+    	@tasks.each_with_index do |item, index|
+  			if item.id == id
+  				@tasks = @tasks.delete_at(index)
+			end
+		end
+    end
+
 end
 
 class Task
@@ -95,6 +103,18 @@ end
       expect(@Todo.add_task(@task1)).to eq([@task1])
       expect(@Todo.add_task(@task2)).to eq([@task1, @task2])
       expect(@Todo.add_task(@task3)).to eq([@task1, @task2, @task3])
+    end
+
+    it "Delete taks from the todo list by its Id" do
+      expect(@Todo.delete_task(1)).to eq([])
+    end
+
+    it "Delete taks from the todo list by its Id" do
+      expect(@Todo.delete_task(2)).to eq([])
+    end
+
+    it "Delete taks from the todo list by its Id" do
+      expect(@Todo.delete_task(3)).to eq([])
     end
 
   end

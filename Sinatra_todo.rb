@@ -1,10 +1,14 @@
 require 'rspec'
+require 'pry'
+require 'yaml/store'
 
 class Todolist
-	attr_reader :tasks
+	attr_reader :tasks, :user
     
-    def initialize
+    def initialize(user)
+        @todo_store = YAML::Store.new("./public/tasks.yml")
         @tasks = []
+        @user = user
     end
 
     def add_task(task)
@@ -19,10 +23,35 @@ class Todolist
 		end
     end
 
+  def find_task_by_id(id)	 
+    	single_task = ""
+    	@tasks.each do |item|
+    		if item.id == id
+  				single_task += item.content
+  			end
+      end
+		  single_task		  
+	end
+
+  def sort_by_created
+    sorted_tasks = @tasks.sort { | task1, task2 | task1.created_at <=> task2.created_at }
+  end
+
+  def save
+    @todo_store.transaction do 
+      @todo_store[@user] = @tasks
+    end
+  end
+
+  def load_tasks
+    file = YAML.load_file(File.join("./public/tasks.yml"))
+    file[@user]
+  end
+
 end
 
 class Task
-	attr_reader :content, :id, :done
+	attr_accessor :content, :id, :done, :created_at
     @@current_id = 1
     def initialize(content)
         @content = content
@@ -56,7 +85,7 @@ end
 describe Todolist do 
 
 before :each do
-	@Todo = Todolist.new
+	@Todo = Todolist.new("Paco Pil")
 	@task1 = Task.new("alguna cosa tendre que hacer")
 	@task2 = Task.new("luego hare algo mas")
 	@task3 = Task.new("y luego toca descansar")
@@ -105,18 +134,43 @@ end
       expect(@Todo.add_task(@task3)).to eq([@task1, @task2, @task3])
     end
 
-    it "Delete taks from the todo list by its Id" do
-      expect(@Todo.delete_task(1)).to eq([])
+    #it "Delete taks from the todo list by its Id" do
+    #  expect(@Todo.delete_task(2)).to eq([])
+    #end
+
+    it "Shows a taks from the todo list by its Id" do
+      @Todo.add_task(@task1)
+      @Todo.add_task(@task2)
+      @Todo.add_task(@task3)
+
+      expect(@Todo.find_task_by_id(@task3.id)).to eq(@task3.content)
     end
 
-    it "Delete taks from the todo list by its Id" do
-      expect(@Todo.delete_task(2)).to eq([])
+    it "Sorts the taks by the created_at field" do
+      @Todo.add_task(@task1)
+      @Todo.add_task(@task2)
+      expect(@Todo.sort_by_created).to eq([@task1, @task2])
     end
 
-    it "Delete taks from the todo list by its Id" do
-      expect(@Todo.delete_task(3)).to eq([])
+    it "Creates a user with the todo object" do
+      newuser = Todolist.new("Paco Pil")
+      expect(newuser.user).to eq("Paco Pil")
     end
 
+   it "Saves and loads the list of the tasks" do
+      todo_list = Todolist.new("Josh")
+      task = Task.new("Walk the dog")
+      task2 = Task.new("Buy the milk")
+      task3 = Task.new("Make my todo list into a web app")
+      todo_list.add_task(task)
+      todo_list.add_task(task2)
+      todo_list.add_task(task3)
+      todo_list.save
+      todo_list = Todolist.new("Josh")
+      todo_list.load_tasks
+      expect(todo_list.load_tasks.length).to eq(3)
+    end
+  
   end
 
 end

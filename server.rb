@@ -11,3 +11,10 @@ get "/tasks" do
 	@todo = todo_list
 	erb(:task_index)
 end
+
+post "/new_task" do
+	@content = params[:content]
+	newtask = Task.new(@content)
+	todo_list.add_task(newtask)
+	redirect "tasks"
+end

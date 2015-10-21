@@ -45,7 +45,7 @@ class Todolist
 
   def load_tasks
     file = YAML.load_file(File.join("./public/tasks.yml"))
-    file[@user]
+    @tasks = file[@user]
   end
 
 end
@@ -168,7 +168,7 @@ end
       todo_list.save
       todo_list = Todolist.new("Josh")
       todo_list.load_tasks
-      expect(todo_list.load_tasks.length).to eq(3)
+      expect(todo_list.tasks.length).to eq(3)
     end
   
   end

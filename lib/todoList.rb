@@ -45,7 +45,8 @@ class Todolist
 
   def load_tasks
     file = YAML.load_file(File.join("./public/tasks.yml"))
-    file[@user]
+    
+    @tasks = file[@user]
   end
 
 end
